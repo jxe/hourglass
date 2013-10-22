@@ -1,49 +1,24 @@
-<!DOCTYPE html>
-<html>
+<style type="text/css">
+	body{ font-family: helvetica; }
+	#dockitems a { display:inline-block; text-align:center; text-decoration: none;}
+	#dockitems img { height: 200px; width: 200px; border-radius: 10px; }
+	#dockitems h2 { font-size: 18px; color: black; }
+</style>
+<script type="text/javascript">
+function add_dockitem(title, img_url){
+	var url = "sandapp:dockitem?title="+title.replace(' ', '+')+"&image_url=" + img_url;
+	dockitems.innerHTML += "<a href='"+url+"'><img src='"+img_url+"'><h2>"+title+"</h2></a>";
+}
+</script>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Hourglass : The Sand Store" />
+<h2>Welcome to the Dock Item Store!</h2>
+<p>Click an item below to install it on your sand dock and do more of it.</p>
+<div id="dockitems"></div>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+<script type="text/javascript">
 
-    <title>Hourglass</title>
-  </head>
 
-  <body>
+add_dockitem("band practice", "http://distilleryimage4.s3.amazonaws.com/a9b54f203ada11e3bd1c22000a1fd1e7_8.jpg");
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/jxe/hourglass">View on GitHub</a>
 
-          <h1 id="project_title">Hourglass</h1>
-          <h2 id="project_tagline">The Sand Store</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jxe/hourglass/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jxe/hourglass/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p><a href="sanditem:%7B%0A%09title%3A%20%22yoga%22%2C%0A%09image_url%3A%20%22http%3A//coreydurkin.com/wp-content/uploads/2011/03/Yoga_2.jpg%22%2C%0A%09regex%3A%20%22yoga%22%2C%0A%09suggestions_desc%3A%20%22for%20yoga%22%2C%0A%09suggestions_url%3A%20%22http%3A//www.yoga.com/%22%0A%7D%0A">Yoga DockItem</a></p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Hourglass maintained by <a href="https://github.com/jxe">jxe</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
-</html>
+</script>
