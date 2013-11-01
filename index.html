@@ -1,29 +1,68 @@
-<style type="text/css">
+<!-- 
+Todo
+- add goes to blank edit page w. two text fields and updater button and cancel button
+- edit page lets you get an image url from an instagram search
+- edit page w/ add suggestion url
+- edit lets you change categories
+- browse displays categories
+- better page layout. add is hidden..
+-->
+
+
+<style>
 	body{ font-family: helvetica; }
 	#dockitems a { display:inline-block; text-align:center; text-decoration: none;}
 	#dockitems img { height: 200px; width: 200px; border-radius: 10px; }
 	#dockitems h2 { font-size: 18px; color: black; }
 </style>
-<script type="text/javascript">
-function add_dockitem(title, img_url){
-	var url = "sandapp:dockitem?title="+title.replace(' ', '+')+"&image_url=" + img_url;
-	dockitems.innerHTML += "<a href='"+url+"'><img src='"+img_url+"'><h2>"+title+"</h2></a>";
-}
-</script>
+
+
+
 
 <h2>Welcome to the Dock Item Store!</h2>
 <p>Click an item below to install it on your sand dock and do more of it.</p>
-<div id="dockitems"></div>
+<div id="dockitems">
+	<a data-set="href:url"><img data-set="src:image_url"><h2 class="title"></h2></a>
+</div>
 
 <p>Or you can also <a href="sandapp:reset-dock">reset your dock to factory settings</a>.</p>
 
-<script type="text/javascript">
+<p>Or <a id="add_dockitem">add your own</a></p>
 
-add_dockitem("band practice", "http://distilleryimage4.s3.amazonaws.com/a9b54f203ada11e3bd1c22000a1fd1e7_8.jpg");
-add_dockitem("sorrow", "http://distilleryimage0.s3.amazonaws.com/93f201023b4211e380b322000a1f9c82_7.jpg");
-add_dockitem("celebration", "http://distilleryimage1.s3.amazonaws.com/e6683da422bd11e385d522000a9f3c76_7.jpg");
-add_dockitem("horn break", "http://distilleryimage10.s3.amazonaws.com/5db6b7983b3f11e396f222000a9f4dd8_8.jpg");
-add_dockitem("crystalline presence", "http://distilleryimage3.s3.amazonaws.com/685bbb083b8f11e38da322000a9e5de9_6.jpg");
-add_dockitem("strutting my stuff", "http://distilleryimage8.s3.amazonaws.com/2b2a7f1a3b4b11e3855722000aa800e1_6.jpg");
-add_dockitem("crazy unknowing", "http://bitcast-r.v1.sjc1.bitgravity.com/myyoga/open/images/blog/medium/167-childs-pose-the-unknowing-back-arch.jpg");
+
+
+
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src="firemapper.js"></script>
+<script>
+var q = Quickfire("https://sandstore.firebaseio.com", {
+	init: function(q){
+		q.param('$category', 'main');
+	},
+
+	live_updating: {
+		"#dockitems": "dockitems_by_category/$category[]"
+	},
+
+	computed_fields: {
+		"#dockitems": {
+			'url': function(data){
+				var title = data.title.replace(' ', '+');	
+				return "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
+			}
+		}
+	},
+
+	on_click: {
+		"#add_dockitem": function(){
+			var title, image_url;
+			if (!(title = prompt('Title:'))) return;
+			if (!(image_url = prompt('Image URL:'))) return;
+			q.domref('#dockitems').push({
+				title: title, 
+				image_url: image_url
+			});
+		}
+	}
+})
 </script>
