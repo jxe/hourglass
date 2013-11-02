@@ -22,10 +22,12 @@
 				return this.path.indexOf(v) != -1;
 			},
 			expand_path: function(){
+				var incomplete = false;
 				var expanded = this.path.replace(/\$(\w+)/g, function(match){
-					return vars[match] || '###';
+					if (!vars[match]) incomplete = true;
+					else return vars[match];
 				});
-				if (expanded.indexOf('###') == -1) return expanded;
+				if (!incomplete) return expanded;
 			},
 			is_path_up_to_date: function(){
 				return (this.expanded_path && this.expanded_path == this.expand_path());
@@ -116,18 +118,21 @@
 	}
 
 	function decorate_element(el, json, domid){
-			var directive = el.getAttribute('data-set');
-			if (!directive) return;
-			var parts = directive.split(':');
-			var attr = parts[0], path = parts[1];
-			var val = get_field_value(domid, json, path);
-			el.setAttribute(attr, val);
+		// console.log("before: ", el);
+		var directive = el.getAttribute('data-set');
+		if (!directive) return;
+		var parts = directive.split(':');
+		var attr = parts[0], path = parts[1];
+		var val = get_field_value(domid, json, path);
+		el.setAttribute(attr, val);
+		// console.log("after: ", el);
 	}
 
 	function project(json, dom, domid){
-		if (!dom.firstElementChild){
+		if (typeof json === 'string' || typeof json === 'number'){
+		// if (!hasChildElements(dom)){
 			dom.innerHTML = json;
-			return;
+			return dom;
 		}
 		if (json.id) dom.id = json.id;
 
@@ -138,18 +143,23 @@
 			decorate_element(el, json, domid);
 		}
 
-		for (var k in json){
-			alleach(dom, k, function(m){ m.innerHTML = json[k]; });
-		}
+		// for (var k in json){
+		// 	alleach(dom, k, function(m){ m.innerHTML = json[k]; });
+		// }
 		return dom;
 	}
 
+	function logdom(str, d){
+		console.log(str, d.cloneNode(true));
+	}
+
 	function projectAll(array, dom, domid, path){
+		logdom('projectAll', dom);
 		var doms = [];
 		for (var k in array){
 			var o = array[k];
 			o.id = k;
-			var clone = dom.cloneNode();
+			var clone = dom.cloneNode(true);
 			clone.data = o;
 			clone.path = path + '/' + o.id;
 			doms.push(project(o, clone, domid));
@@ -170,7 +180,8 @@
 			// it's a collection
 			var outer = document.querySelector(domid);
 			if (!outer) return alert("Not found in DOM: " + domid);
-			templates[domid] = outer.firstElementChild;
+			templates[domid] = outer.firstElementChild.cloneNode(true);
+			logdom('template', templates[domid]);
 			outer.innerHTML = "";
 			dyn.on('value', function(snap){
 				// console.log('got value for collection', domid);
@@ -178,6 +189,7 @@
 				outer.innerHTML = "";
 				if (!val) return;
 				var dom_objs = projectAll(val, templates[domid], domid, snap.ref().toString());
+				// console.log(dom_objs);
 				dom_objs.forEach(function(dom){
 					outer.appendChild(dom);
 				});
