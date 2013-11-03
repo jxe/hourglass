@@ -92,7 +92,7 @@
 	// Quickfire
 
 	var templates = {}, mapping = {}, computed_fields = {};
-	var visiblity = {}, on_click = {};
+	var visibility = {}, on_click = {};
 
 	function matches(element, selector){
 		if (!element || element.nodeType !== 1) return false;
@@ -204,11 +204,12 @@
 	}
 
 	function refresh(){
-		for (var k in visiblity){
+		for (var k in visibility){
+			console.log('refreshing', k);
 			var nodes = document.querySelectorAll(k);
 			for (var i = 0; i < nodes.length; i++) {
 				var el = nodes[i];
-				if (visiblity[k](el)) el.style.display = '';
+				if (visibility[k](el)) el.style.display = '';
 				else el.style.display = 'none';
 			};
 		}
@@ -218,8 +219,10 @@
 		refresh();
 		document.addEventListener('click', function(ev){
 			for (var k in on_click){
+				console.log(ev.target, k);
 				var el = closest(ev.target, k);
 				if (el){
+					console.log('el', el);
 					on_click[k](el);
 					refresh();
 					return false;
@@ -238,9 +241,10 @@
 		};
 		if (obj.live_updating) map_to_dom(F, obj.live_updating);
 		if (obj.on_click) on_click = obj.on_click;
-		if (obj.visiblity) visiblity = obj.visiblity;
+		if (obj.visibility) visibility = obj.visibility;
 		if (obj.computed_fields) computed_fields = obj.computed_fields;
 		if (obj.init) obj.init(helper);
+		// refresh();
 		return helper;
 	};
 

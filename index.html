@@ -1,5 +1,6 @@
 <!-- 
 Todo
+- add ratchet 2.0 and make the menu popup fn work somehow
 - add goes to blank edit page w. two text fields and updater button and cancel button
 - edit page lets you get an image url from an instagram search
 - edit page w/ add suggestion url
@@ -8,36 +9,71 @@ Todo
 - better page layout. add is hidden..
 -->
 
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<link rel="stylesheet" href="ratchet.css">
 <style>
 	body{ font-family: helvetica; }
 	#dockitems a { display:inline-block; text-align:center; text-decoration: none;}
-	#dockitems img { height: 200px; width: 200px; border-radius: 10px; }
+	#dockitems img { height: 100px; width: 100px; border-radius: 10px; }
 	#dockitems h2 { font-size: 18px; color: black; }
 </style>
 
+<div class="page" id="home">
+	<header class="bar-nav">
+		<h1 class="navtitle">Dock Store</h1>
+		<a href="#" id="go_add" class="button">Add</a>
+	</header>
 
-
-
-<h2>Welcome to the Dock Item Store!</h2>
-<p>Click an item below to install it on your sand dock and do more of it.</p>
-<div id="dockitems">
-	<a data-set="href:url"><img data-set="src:image_url"><h2 class="title"></h2></a>
+	<div class="content">
+	  <div class="content-padded">
+		<h2>Welcome to the Dock Item Store!</h2>
+		<p>Click an item below to install it on your sand dock and do more of it.  Or you can also <a href="sandapp:reset-dock">reset your dock to factory settings</a>.</p>
+	  </div>
+	  <ul class="table-view" id="dockitems">
+		<li class="table-view-cell">
+			<a data-set="href:url">
+				<img data-set="src:image_url">
+				<strong class="title"></strong>
+			</a>
+		</li>
+	  </ul>
+	</div>
 </div>
 
-<p>Or you can also <a href="sandapp:reset-dock">reset your dock to factory settings</a>.</p>
 
-<p>Or <a id="add_dockitem">add your own</a></p>
+<div class="page" id="add">
+	<header class="bar-nav">
+		<a href="#" id="go_back" class="button-prev">back</a>
+		<h1 class="navtitle">Dock Store</h1>
+	</header>
+	<div class="content">
+	  <div class="content-padded">
+	  	<!-- <a href="#" class="button-primary" id="add_dockitem">Add dockitem</a> -->
+
+	  	<a href="#" class="button-primary" id="load_instafeed">Search Instagram</a>
+	  	<div id="instafeed"></div>
+	  </div>
+    </div>
+</div>
+
 
 
 
 
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src="firemapper.js"></script>
+<script src="instafeed.min.js"></script>
 <script>
+
+var page = 'home';
+
 var q = Quickfire("https://sandstore.firebaseio.com", {
 	init: function(q){
 		q.param('$category', 'main');
+	},
+
+	visibility: {
+		'.page': function(el){ return page == el.id; }
 	},
 
 	live_updating: {
@@ -54,14 +90,42 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 	},
 
 	on_click: {
-		"#add_dockitem": function(){
-			var title, image_url;
-			if (!(title = prompt('Title:'))) return;
-			if (!(image_url = prompt('Image URL:'))) return;
-			q.domref('#dockitems').push({
-				title: title, 
-				image_url: image_url
-			});
+		'#go_add':  function(){ page = 'add';  },
+		'#go_back': function(){ page = 'home'; },
+
+		// "#add_dockitem": function(){
+		// 	var title, image_url;
+		// 	if (!(title = prompt('Title:'))) return;
+		// 	if (!(image_url = prompt('Image URL:'))) return;
+		// 	q.domref('#dockitems').push({
+		// 		title: title, 
+		// 		image_url: image_url
+		// 	});
+		// },
+
+		'.insta_image': function(el){
+			var img_url = el.getAttribute('url');
+			var title = el.getAttribute('title');
+			var yes = confirm('Really add a dockitem with this photo and title: ' + title + '?');
+			if (yes){
+				q.domref('#dockitems').push({
+					title: title, 
+					image_url: img_url
+				});
+				page = 'home';
+			}
+		},
+
+		'#load_instafeed': function(){
+			var title = prompt('Title: ');
+			if (!title) return;
+			var feed = new Instafeed({
+			        get: 'tagged',
+			        tagName: title,
+			        template: '<a title="'+title+'" url="{{image}}" class="insta_image" href="#"><img src="{{image}}" /><h2>'+title+'</h2></a>',
+			        clientId: 'eabce8dcad66460c87edc348328c602f'
+		    });
+		    feed.run();
 		}
 	}
 })
