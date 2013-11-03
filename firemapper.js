@@ -143,9 +143,9 @@
 			decorate_element(el, json, domid);
 		}
 
-		// for (var k in json){
-		// 	alleach(dom, k, function(m){ m.innerHTML = json[k]; });
-		// }
+		for (var k in json){
+			alleach(dom, k, function(m){ m.innerHTML = json[k]; });
+		}
 		return dom;
 	}
 
