@@ -92,7 +92,8 @@
 	// Quickfire
 
 	var templates = {}, mapping = {}, computed_fields = {};
-	var visibility = {}, on_click = {};
+	var visibility = {}, on_click = {}, filters = {};
+	var latest = {}, latest_path = {};
 
 	function matches(element, selector){
 		if (!element || element.nodeType !== 1) return false;
@@ -167,6 +168,18 @@
 		return doms;
 	}
 
+	function reproject_collection(domid){
+		var outer = document.querySelector(domid);
+		var path = latest_path[domid];
+		var val = latest[domid];
+		if (filters[domid]){ val = filters[domid](val); }
+		outer.innerHTML = "";
+		if (!val) return;
+		var dom_objs = projectAll(val, templates[domid], domid, path);
+		// console.log(dom_objs);
+		dom_objs.forEach(function(dom){ outer.appendChild(dom); });
+	}
+
 	function map_to_dom(fbref, domid, path){
 		if (!path) {
 			for (var k in domid) map_to_dom(fbref, k, domid[k]);
@@ -185,14 +198,9 @@
 			outer.innerHTML = "";
 			dyn.on('value', function(snap){
 				// console.log('got value for collection', domid);
-				var val = snap.val();
-				outer.innerHTML = "";
-				if (!val) return;
-				var dom_objs = projectAll(val, templates[domid], domid, snap.ref().toString());
-				// console.log(dom_objs);
-				dom_objs.forEach(function(dom){
-					outer.appendChild(dom);
-				});
+				latest[domid] = snap.val();
+				latest_path[domid] = snap.ref().toString();
+				reproject_collection(domid);
 			});
 		} else {
 			// simple object
@@ -241,6 +249,7 @@
 		};
 		if (obj.live_updating) map_to_dom(F, obj.live_updating);
 		if (obj.on_click) on_click = obj.on_click;
+		if (obj.filters) filters = obj.filters;
 		if (obj.visibility) visibility = obj.visibility;
 		if (obj.computed_fields) computed_fields = obj.computed_fields;
 		if (obj.init) obj.init(helper);
@@ -249,4 +258,5 @@
 	};
 
 	window.Quickfire.refresh = refresh;
+	window.Quickfire.reproject_collection = reproject_collection;
 })();
