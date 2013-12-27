@@ -120,7 +120,10 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 		"#dockitems": {
 			'url': function(data){
 				var title = data.title.replace(' ', '+');	
-				return "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
+				var url = "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
+				if (data.suggestions_desc) url += "&suggestions_desc=" + encodeURIComponent(data.suggestions_desc);
+				if (data.suggestions_url) url += "&suggestions_url=" + encodeURIComponent(data.suggestions_url);
+				return url;
 			}
 		}
 	},
