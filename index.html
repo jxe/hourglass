@@ -48,17 +48,16 @@ Todo
 		<p>Click a category below to find activities to put in your dock.  Or, <a href="sandapp:reset-dock">reset your dock to factory settings</a>.</p>
 	  </div>
 	  <ul class="table-view" id="categories">
-		<li class="table-view-cell">
-			<a href="#"><strong>All</strong></a>
-			<a href="#"><strong>Lifestyle</strong></a>
-			<a href="#"><strong>Health</strong></a>
-			<a href="#"><strong>Food</strong></a>
-			<a href="#"><strong>Shopping</strong></a>
-			<a href="#"><strong>Entertainment</strong></a>
-			<a href="#"><strong>Meditation</strong></a>
-			<a href="#"><strong>Emotions</strong></a>
-			<a href="#"><strong>Unsorted</strong></a>
-		</li>
+		<li class="table-view-cell"><a href="#"><strong>Get togethers</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Me time</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Chores</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Health</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Work</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Meditation</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Emotions</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Eating</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Unsorted</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>All</strong></a></li>
 	  </ul>
     </div>
 </div>
@@ -166,7 +165,9 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 		},
 
 		'#categories a': function(el){
-			category = el.innerText.toLowerCase();
+			category = el.innerText.toLowerCase().replace(/ /g, '-');
+			if (category == 'get-togethers') category = 'soc';
+			if (category == 'me-time') category = 'me';
 			page = 'home';
 			Quickfire.reproject_collection('#dockitems');
 		},
