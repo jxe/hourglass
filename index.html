@@ -51,7 +51,6 @@ Todo
 		<li class="table-view-cell">
 			<a href="#"><strong>All</strong></a>
 			<a href="#"><strong>Lifestyle</strong></a>
-			<a href="#"><strong>Creativity</strong></a>
 			<a href="#"><strong>Health</strong></a>
 			<a href="#"><strong>Food</strong></a>
 			<a href="#"><strong>Shopping</strong></a>
@@ -73,9 +72,9 @@ Todo
 	</header>
 	<div class="content">
 	  <div class="content-padded">
+	  	Adding: <b id="add_title">...</b><br>
 	  	<!-- <a href="#" class="button-primary" id="add_dockitem">Add dockitem</a> -->
-
-	  	<a href="#" class="button-primary" id="load_instafeed">Search Instagram</a>
+	  	<a href="#" class="button-primary" id="load_instafeed">Search Instagram for photos</a>
 	  	<div id="instafeed"></div>
 	  </div>
     </div>
@@ -127,7 +126,13 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 	},
 
 	on_click: {
-		'#go_add':  function(){ page = 'add';  },
+		'#go_add':  function(){
+			var title = prompt('Title:');
+			if (!title) return;
+			window.add_title = title;
+			document.getElementById('add_title').innerHTML = window.add_title;
+			page = 'add';
+		},
 		'#go_back': function(){ page = 'home'; },
 		'#go_categories':  function(){ page = 'categories';  },
 
@@ -145,6 +150,16 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 			var data = el.parentNode.data;
 			var cat = prompt('New Category:', data.category);
 			if (cat) q.domref('#dockitems').child(el.parentNode.id).update({category: cat});
+
+			var suggestions_desc = prompt('suggestions_desc:');
+			if (!suggestions_desc) return;
+			var suggestions_url = prompt('suggestions_url:');
+			if (!suggestions_url) return;
+
+			q.domref('#dockitems').child(el.parentNode.id).update({
+				suggestions_url: suggestions_url,
+				suggestions_desc: suggestions_desc
+			});
 		},
 
 		'#categories a': function(el){
@@ -156,10 +171,10 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 		'.insta_image': function(el){
 			var img_url = el.getAttribute('url');
 			var title = el.getAttribute('title');
-			var yes = confirm('Really add a dockitem with this photo and title: ' + title + '?');
+			var yes = confirm('Really add a dockitem with this photo and title: ' + window.add_title + '?');
 			if (yes){
 				q.domref('#dockitems').push({
-					title: title, 
+					title: window.add_title, 
 					image_url: img_url,
 					category: category
 				});
@@ -168,12 +183,12 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 		},
 
 		'#load_instafeed': function(){
-			var title = prompt('Title: ');
+			var title = prompt('Query: ');
 			if (!title) return;
 			var feed = new Instafeed({
 			        get: 'tagged',
 			        tagName: title,
-			        template: '<a title="'+title+'" url="{{image}}" class="insta_image" href="#"><img src="{{image}}" /><h2>'+title+'</h2></a>',
+			        template: '<a title="'+window.add_title+'" url="{{image}}" class="insta_image" href="#"><img src="{{image}}" /><h2>'+window.add_title+'</h2></a>',
 			        clientId: 'eabce8dcad66460c87edc348328c602f'
 		    });
 		    feed.run();
