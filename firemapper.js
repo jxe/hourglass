@@ -125,7 +125,8 @@
 		var parts = directive.split(':');
 		var attr = parts[0], path = parts[1];
 		var val = get_field_value(domid, json, path);
-		el.setAttribute(attr, val);
+		if (attr == 'text') el.innerHTML = val;
+		else el.setAttribute(attr, val);
 		// console.log("after: ", el);
 	}
 
