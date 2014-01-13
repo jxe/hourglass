@@ -1,46 +1,39 @@
 var page = 'categories', category = 'all';
 
-var q = Quickfire("https://sandstore.firebaseio.com", {
-	init: function(q){
-		q.param('$category', 'main');
-	},
+var q = Fireball("https://sandstore.firebaseio.com", {
+	show_when: { '.page': function(el){ return page == el.id; } },
 
-	visibility: {
-		'.page': function(el){ return page == el.id; }
-	},
-
-	filters:{
-		"#dockitems": function(val){
+	map: {
+		"#dockitems...": ["dockitems_by_category/main", function(val){
 			if (category == 'all') return val;
 			var new_val = {};
 			for (var k in val){
 				if (val[k].category == category) new_val[k] = val[k];
 				else if (!val[k].category && category == 'unsorted') new_val[k] = val[k];
-			}				
-			return new_val;
-		}
-	},
-
-	live_updating: {
-		"#dockitems": "dockitems_by_category/$category[]",
-		"#activity": "dockitems_by_category/$category/$activity"
-	},
-
-	computed_fields: {
-		"#activity": {
-			'url': function(data){
-				var title = data.title.replace(' ', '+');	
-				var url = "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
-				if (data.suggestions_desc) url += "&suggestions_desc=" + encodeURIComponent(data.suggestions_desc);
-				if (data.suggestions_url) url += "&suggestions_url=" + encodeURIComponent(data.suggestions_url);
-				return url;
 			}
+			console.log(new_val);
+			return new_val;
+		}],
+		"#activity": "dockitems_by_category/main/$activity"
+	},
+
+	on_change: {
+		'#suggestions_desc': function(el){
+			Fireball('#activity').update({ 'suggestions_desc': el.value });
+		},
+		'#suggestions_url': function(el){
+			Fireball('#activity').update({ 'suggestions_url': el.value });
 		}
 	},
 
 	on_click: {
 		'#activity button': function(){
-			
+			var data = Fireball.latest('#activity');
+			var title = data.title.replace(' ', '+');	
+			var url = "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
+			if (data.suggestions_desc) url += "&suggestions_desc=" + encodeURIComponent(data.suggestions_desc);
+			if (data.suggestions_url) url += "&suggestions_url=" + encodeURIComponent(data.suggestions_url);
+			window.location = url;
 		},
 
 		'#go_add':  function(){
@@ -63,9 +56,9 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 		// 	});
 		// },
 
-		'a.edit': function(el){
+		'#dockitems a': function(el){
 			page = 'edit';
-			q.param('$activity', el.parentNode.id);
+			Fireball.set('$activity', el.parentNode.id);
 			return;
 
 			// var data = el.parentNode.data;
@@ -88,7 +81,7 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 			if (category == 'get-togethers') category = 'soc';
 			if (category == 'me-time') category = 'me';
 			page = 'home';
-			Quickfire.reproject_collection('#dockitems');
+			Fireball.refresh('#dockitems...');
 		},
 
 		'.insta_image': function(el){
@@ -96,12 +89,13 @@ var q = Quickfire("https://sandstore.firebaseio.com", {
 			var title = el.getAttribute('title');
 			var yes = confirm('Really add a dockitem with this photo and title: ' + window.add_title + '?');
 			if (yes){
-				q.domref('#dockitems').push({
+				var id = Fireball('#dockitems').push({
 					title: window.add_title, 
 					image_url: img_url,
 					category: category
-				});
-				page = 'home';
+				}).name();
+				Fireball.set('$activity', id);
+				page = 'edit';
 			}
 		},
 

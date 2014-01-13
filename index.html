@@ -11,9 +11,9 @@ Todo
 <link rel="stylesheet" href="ratchet.css">
 <style>
 	body{ font-family: helvetica; }
-	#dockitems a { display:inline-block; text-align:center; text-decoration: none;}
-	#dockitems img { height: 100px; width: 100px; border-radius: 10px; }
-	#dockitems h2 { font-size: 18px; color: black; }
+	#dockitems a { text-align:center; text-decoration: none; display: -webkit-box; -webkit-box-orient: horizontal; -webkit-box-align: center;}
+	#dockitems img {  max-height: 60px; max-width:60px; border-radius: 10px; }
+	#dockitems h2 { font-size: 18px; color: black; font-weight: normal; margin:0; margin-left:20px;  }
 	#dockitems a.edit { font-size: 11px; color: blue; margin-left: 10px;}
 </style>
 
@@ -29,8 +29,7 @@ Todo
 		<li class="table-view-cell">
 			<a data-set="href:url">
 				<img data-set="src:image_url">
-				<strong class="title"></strong>
-				<a class="edit" href="#">edit</a>
+				<h2 data-set="text:title"></h2>
 			</a>
 		</li>
 	  </ul>
@@ -88,7 +87,7 @@ Todo
 	<div id="activity" class="content">
 	  <div class="content-padded">
 	  	<div style="text-align:center">
-		  	<input data-set="src:category" placeholder="tags" id="tags"><br>
+		  	<input data-set="value:category" placeholder="tags" id="tags"><br>
 		  	<img style="max-width:200px;" data-set="src:image_url">
 		  	<h2 data-set="text:title"></h2>
 		  	<button>Install on dock</button>
@@ -109,6 +108,6 @@ Todo
 
 
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
-<script src="firemapper.js"></script>
+<script src="fireball.js"></script>
 <script src="instafeed.min.js"></script>
 <script src="main.js"></script>
