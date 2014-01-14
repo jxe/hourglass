@@ -1,6 +1,12 @@
 var page = 'categories', category = 'all';
 
 var q = Fireball("https://sandstore.firebaseio.com", {
+	init: function(){
+		if (window.location.hash){
+			Fireball.set('$activity', window.location.hash.slice(1));
+			page = 'edit';
+		}
+	},
 	show_when: { '.page': function(el){ return page == el.id; } },
 
 	map: {
@@ -33,6 +39,7 @@ var q = Fireball("https://sandstore.firebaseio.com", {
 			var url = "sandapp:dockitem?title="+title+"&image_url="+data.image_url;
 			if (data.suggestions_desc) url += "&suggestions_desc=" + encodeURIComponent(data.suggestions_desc);
 			if (data.suggestions_url) url += "&suggestions_url=" + encodeURIComponent(data.suggestions_url);
+			url += "&store_url=" + encodeURIComponent("http://nxhx.org/hourglass/#" + Fireball.get('$activity'));
 			window.location = url;
 		},
 
