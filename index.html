@@ -1,0 +1,113 @@
+<!-- 
+Todo
+- firebase anon auth lets you edit your own contributions
+- edit page w/ add suggestion url
+- edit lets you change categories
+- browse displays categories
+- better page layout. add is hidden..
+-->
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<link rel="stylesheet" href="ratchet.css">
+<style>
+	body{ font-family: helvetica; }
+	#dockitems a { text-align:center; text-decoration: none; display: -webkit-box; -webkit-box-orient: horizontal; -webkit-box-align: center;}
+	#dockitems img {  max-height: 60px; max-width:60px; border-radius: 10px; }
+	#dockitems h2 { font-size: 18px; color: black; font-weight: normal; margin:0; margin-left:20px;  }
+	#dockitems a.edit { font-size: 11px; color: blue; margin-left: 10px;}
+</style>
+
+<div class="page" id="home">
+	<header class="bar-nav">
+		<a href="#" id="go_categories" class="button">Categories</a>
+		<h1 class="navtitle">Dock Store</h1>
+		<a href="#" id="go_add" class="button">Add</a>
+	</header>
+
+	<div class="content">
+	  <ul class="table-view" id="dockitems">
+		<li class="table-view-cell">
+			<a data-set="href:url">
+				<img data-set="src:image_url">
+				<h2 data-set="text:title"></h2>
+			</a>
+		</li>
+	  </ul>
+	</div>
+</div>
+
+
+<div class="page" id="categories">
+	<header class="bar-nav">
+		<h1 class="navtitle">Categories</h1>
+	</header>
+	<div class="content">
+	  <div class="content-padded">
+		<h2>Welcome to the Dock Item Store!</h2>
+		<p>Click a category below to find activities to put in your dock.  Or, <a href="sandapp:reset-dock">reset your dock to factory settings</a>.</p>
+	  </div>
+	  <ul class="table-view" id="categories">
+		<li class="table-view-cell"><a href="#"><strong>Get togethers</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Me time</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Chores</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Health</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Work</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Planning</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Meditation</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Emotions</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Eating</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>Unsorted</strong></a></li>
+		<li class="table-view-cell"><a href="#"><strong>All</strong></a></li>
+	  </ul>
+    </div>
+</div>
+
+
+
+<div class="page" id="add">
+	<header class="bar-nav">
+		<a href="#" id="go_back" class="button-prev">back</a>
+		<h1 class="navtitle">Dock Store</h1>
+	</header>
+	<div class="content">
+	  <div class="content-padded">
+	  	Adding: <b id="add_title">...</b><br>
+	  	<!-- <a href="#" class="button-primary" id="add_dockitem">Add dockitem</a> -->
+	  	<a href="#" class="button-primary" id="load_instafeed">Search Instagram for photos</a>
+	  	<div id="instafeed"></div>
+	  </div>
+    </div>
+</div>
+
+<div class="page" id="edit">
+	<header class="bar-nav">
+		<a href="#" id="go_back" class="button-prev">back</a>
+		<h1 class="navtitle">Activity</h1>
+	</header>
+	<div id="activity" class="content">
+	  <div class="content-padded">
+	  	<div style="text-align:center">
+		  	<input data-set="value:tags" placeholder="tags" id="tags"><br>
+		  	<img style="max-width:200px;" data-set="src:image_url">
+		  	<h2 data-set="text:title"></h2>
+		  	<button>Install on dock</button>
+	  	</div>
+	  	<h3>Helpful links</h3>
+	  	<ul>
+	  		<li>
+	  			<input data-set="value:suggestions_desc" id="suggestions_desc" placehold="suggestions_desc">
+	  			<input data-set="value:suggestions_url" id="suggestions_url" placeholder="suggestions_url">
+	  		</li>
+  		</ul>
+	  </div>
+  </div>
+</div>
+
+
+
+
+
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src="fireball.js"></script>
+<script src="instafeed.min.js"></script>
+<script src="main.js"></script>
