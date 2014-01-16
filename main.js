@@ -11,7 +11,7 @@ var q = Fireball("https://sandstore.firebaseio.com", {
 	show_when: { '.page': function(el){ return page == el.id; } },
 
 	map: {
-		"#dockitems...": ["dockitems_by_category/main", function(val){
+		"#dockitems...": ["activities", function(val){
 			if (category == 'all') return val;
 			var new_val = {};
 			for (var k in val){
@@ -21,7 +21,7 @@ var q = Fireball("https://sandstore.firebaseio.com", {
 			console.log(new_val);
 			return new_val;
 		}],
-		"#activity": "dockitems_by_category/main/$activity"
+		"#activity": "activities/$activity"
 	},
 
 	on_change: {
@@ -30,6 +30,9 @@ var q = Fireball("https://sandstore.firebaseio.com", {
 		},
 		'#suggestions_url': function(el){
 			Fireball('#activity').update({ 'suggestions_url': el.value });
+		},
+		'#tags': function(el){
+			Fireball('#activity').update({ 'tags': el.value });
 		}
 	},
 
@@ -100,7 +103,9 @@ var q = Fireball("https://sandstore.firebaseio.com", {
 				var id = Fireball('#dockitems').push({
 					title: window.add_title, 
 					image_url: img_url,
-					category: category
+					tags: category,
+					ctime: new Date().getTime(),
+					schedct: 0
 				}).name();
 				Fireball.set('$activity', id);
 				page = 'edit';
